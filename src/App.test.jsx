@@ -64,4 +64,40 @@ describe('App', () => {
         
     })
 
+    it('should render Write view', async () => {
+        render(<App />)
+
+        const writeViewBtn = screen.getByRole('write-view-btn')
+
+        fireEvent.click(writeViewBtn)
+        const writeView = screen.getAllByRole('write-view')
+
+        expect(writeView).toHaveLength(1)
+        
+    })
+
+    it('should post a new note', async () => {
+        render(<App />)
+
+        const writeViewBtn = screen.getByRole('write-view-btn')
+
+        fireEvent.click(writeViewBtn)
+        const usernameInput = screen.getByRole('username-input')
+        const textInput = screen.getByRole('text-input')
+        const postBtn= screen.getByRole('post-btn')
+
+        fireEvent.change(usernameInput, {target: {value: 'JanneLarsson'}})
+        fireEvent.change(textInput, {target: {value: 'Hej alla! Testing, testing!'}})
+        fireEvent.click(postBtn)
+
+        await waitFor(() => {
+            expect(screen.queryByText('Du har inga meddelanden att visa')).not.toBeInTheDocument()
+        })
+
+        const msgItems = screen.getAllByRole('msg-item')
+
+        expect(msgItems).toHaveLength(5)
+        
+    })
+
 })
